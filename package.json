@@ -1,0 +1,26 @@
+{
+  "name": "sir-cli",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickolas-shtayn/sir-cli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nickolas-shtayn/sir-cli/issues"
+  },
+  "homepage": "https://github.com/nickolas-shtayn/sir-cli#readme",
+  "description": "",
+  "dependencies": {
+    "@types/node": "^24.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
