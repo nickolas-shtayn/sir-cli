@@ -3,7 +3,6 @@ import fsp from "fs/promises";
 import fs, { existsSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
-import { exec } from "child_process";
 
 const args = process.argv.slice(2);
 
@@ -16,8 +15,13 @@ const title = args[0];
 const description = args[1];
 const id = randomUUID().toUpperCase();
 
-/* will need to update to create in iCloud drive */
-const dir = path.join(".", "RetrievalKanban", "AllItems");
+const dir = path.join(
+  path.normalize(
+    "/Users/nickolas.shtayn/Library/Mobile Documents/com~apple~CloudDocs"
+  ),
+  "RetrievalKanban",
+  "AllItems"
+);
 
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir, { recursive: true });
@@ -36,7 +40,13 @@ async function createKanbanBoard() {
   };
 
   await fsp.writeFile(
-    "RetrievalKanban/KanbanBoard.json",
+    path.join(
+      path.normalize(
+        "/Users/nickolas.shtayn/Library/Mobile Documents/com~apple~CloudDocs"
+      ),
+      "RetrievalKanban",
+      "KanbanBoard.json"
+    ),
     JSON.stringify(kanbanBoardContents),
     {
       flag: "wx",
@@ -61,7 +71,13 @@ async function createRetrievalCard() {
   };
 
   await fsp.writeFile(
-    `RetrievalKanban/AllItems/${id}.KanbanItem.json`,
+    path.join(
+      path.normalize(
+        "/Users/nickolas.shtayn/Library/Mobile Documents/com~apple~CloudDocs"
+      ),
+      "RetrievalKanban",
+      `/AllItems/${id}.KanbanItem.json`
+    ),
     JSON.stringify(retrievalCardContents),
     {
       flag: "wx",
@@ -77,8 +93,9 @@ function addNotePlanTask() {
   const day = today.getDate();
 
   const notePlanFile = `${year}${month}${day}.md`;
-  const calendarNotesPath =
-    "/Users/nickolas.shtayn/Library/Containers/co.noteplan.NotePlan3/Data/Library/Application Support/co.noteplan.NotePlan3/Calendar";
+  const calendarNotesPath = path.normalize(
+    "/Users/nickolas.shtayn/Library/Containers/co.noteplan.NotePlan3/Data/Library/Application Support/co.noteplan.NotePlan3/Calendar"
+  );
 
   const exactPath = path.join(calendarNotesPath, notePlanFile);
   const noteContent = readFileSync(exactPath, "utf8");
