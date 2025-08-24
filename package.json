@@ -1,6 +1,9 @@
 {
   "name": "sir-cli",
   "version": "1.0.0",
+  "bin": {
+    "sir": "./dist/index.js"
+  },
   "main": "index.js",
   "scripts": {
     "build": "tsc"
@@ -20,8 +23,12 @@
   "description": "",
   "dependencies": {
     "@types/node": "^24.3.0",
+    "adm-zip": "^0.5.16",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
     "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.7"
   }
 }

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import fs, { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import AdmZip from "adm-zip";
 
 const args = process.argv.slice(2);
 
@@ -21,13 +22,30 @@ function cfAbsoluteTimeNow(date: Date = new Date()): number {
 
 if (args.includes("-d")) {
   const descriptionIndex = args.indexOf("-d");
-  cardDescription = `# Context \n - ${args
+  cardDescription = `# Context \n ${args
     .slice(descriptionIndex + 1)
     .join(" ")}`;
   cardTitle = args.slice(0, descriptionIndex).join(" ");
 } else {
   cardDescription = null;
   cardTitle = args.join(" ");
+}
+
+function zipSync() {
+  const zip = new AdmZip();
+  const srcDir = path.normalize(
+    "/Users/nickolas.shtayn/Library/Mobile Documents/com~apple~CloudDocs/RetrievalKanban"
+  );
+  const rootName = "RetrievalKanban";
+
+  zip.addLocalFolder(srcDir, rootName);
+
+  zip.writeZip(
+    path.join(
+      "/Users/nickolas.shtayn/Library/Mobile Documents/com~apple~CloudDocs",
+      "RetrievalKanban.zip"
+    )
+  );
 }
 
 function addCardToNotePlan() {
@@ -99,6 +117,7 @@ if (
   );
 
   writeFileSync(cardPath, JSON.stringify(card));
+  zipSync();
   addCardToNotePlan();
 } else {
   mkdirSync(
@@ -131,5 +150,6 @@ if (
   );
 
   writeFileSync(cardPath, JSON.stringify(card));
+  zipSync();
   addCardToNotePlan();
 }
