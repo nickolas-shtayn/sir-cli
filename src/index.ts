@@ -7,11 +7,11 @@ import AdmZip from "adm-zip";
 const args = process.argv.slice(2);
 
 if (!args.length) {
-  console.error("Usage: sir <card title> -d <optional description>");
+  console.error('Usage: sir "card title" -d "optional description"');
   process.exit(1);
 }
 
-let cardTitle: string;
+let cardTitle: string | undefined;
 let cardDescription: string | null;
 const cardId = randomUUID().toUpperCase();
 
@@ -22,10 +22,13 @@ function cfAbsoluteTimeNow(date: Date = new Date()): number {
 
 if (args.includes("-d")) {
   const descriptionIndex = args.indexOf("-d");
-  cardDescription = `# Context \n ${args
-    .slice(descriptionIndex + 1)
-    .join(" ")}`;
-  cardTitle = args.slice(0, descriptionIndex).join(" ");
+  cardDescription = `# Context \n ${args[descriptionIndex + 1]}`;
+  cardTitle = args[descriptionIndex - 1];
+
+  if (!cardTitle) {
+    console.error("Missing title");
+    process.exit(1);
+  }
 } else {
   cardDescription = null;
   cardTitle = args.join(" ");
@@ -52,7 +55,7 @@ function addCardToNotePlan() {
   const newTask = `* Add ${cardTitle} to Ahmni`;
   const today = new Date();
   const year = today.getFullYear();
-  const month = "0" + (today.getMonth() + 1);
+  const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = today.getDate();
 
   const notePlanFile = `${year}${month}${day}.md`;
@@ -73,14 +76,16 @@ const card = {
   id: cardId,
   title: cardTitle,
   shortText: "---",
-  longText: cardDescription ? cardDescription : "",
+  longText: cardDescription ?? "",
   date: cfAbsoluteTimeNow(),
   colorTag: "1.0004385709762573,0.22760793566703796,0.18670153617858887,1.0",
   fileIDs: [],
 };
 
 const cardPath = path.join(
-  "/Users/nickolas.shtayn/Library/Mobile Documents/com~apple~CloudDocs",
+  path.normalize(
+    "/Users/nickolas.shtayn/Library/Mobile Documents/com~apple~CloudDocs"
+  ),
   "RetrievalKanban",
   "AllItems",
   `${cardId}.KanbanItem.json`
@@ -115,10 +120,6 @@ if (
     ),
     JSON.stringify(kanbanColumn)
   );
-
-  writeFileSync(cardPath, JSON.stringify(card));
-  zipSync();
-  addCardToNotePlan();
 } else {
   mkdirSync(
     path.join(
@@ -148,8 +149,7 @@ if (
     ),
     JSON.stringify(kanbanBoardContents)
   );
-
-  writeFileSync(cardPath, JSON.stringify(card));
-  zipSync();
-  addCardToNotePlan();
 }
+writeFileSync(cardPath, JSON.stringify(card));
+zipSync();
+addCardToNotePlan();
